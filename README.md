@@ -1,6 +1,11 @@
-# EXPRESS MONGODB TYPESCRIPT BASE PROJECT WITH MOCHA TESTS
+# API FOR SEARCHING AND FILTERING DEPUTIES IN FRENCH ASSEMBLEE NATIONALE
 
-This is a basic Typescript project configuration with Express, Mongodb and Mocha tests (used most of time for backend applications).
+Provide http routes for searching and filtering deputies with customs fields from key-words or sentences found in the articles they published.
+Provide also scripts to restructure datas from deputies bson files and to store and asignate articles from pdf official files of Assemblée National parutions. 
+
+## TECHNO
+
+<em>nodejs, express, mongodb, pdf-parse</em>
 
 ## USAGE 
 
@@ -8,14 +13,4 @@ This is a basic Typescript project configuration with Express, Mongodb and Mocha
 2. Open a terminal and move to the root of the project in the folder created by cloning repository.
 3. In the terminal, type "npm i" and press enter (you have to get [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) and [nodejs](https://nodejs.org/en/download/) installed).
 3. In the terminal, type "npm run test" and press enter for launching mocha test or "npm run build" to create a dist folder containing the javascript native code.
-4. Be shure to have [mongodb](https://www.mongodb.com/) installed on your local machine and accessible.
-
-
-## TEST NOTES
-
-Mongoose reset the database before launching all tests.
-It should drop all the collections and indexes in the index.data.spec.ts to avoid problems with indexes.
-
-## EXAMPLE
-
-You can find an example of using and testing mongodb in example.data.ts and example.data.spec.ts.
+4. Be shure to have [mongodb](https://www.mongodb.com/) installed on your local machine and accessible for dev mode.

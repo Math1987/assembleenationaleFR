@@ -1,5 +1,13 @@
 const MongoClient = require('mongodb').MongoClient;
-const client = new MongoClient('mongodb://localhost:27017')
+const client = new MongoClient('mongodb://localhost:27017');
+
+/**
+ * This nodeJS script will read the db "deputies", collection "deputies"
+ * and update it as it can be compatible with the pdf of French National Assembly
+ *  
+ * @returns 
+ */
+
 function connect(){
     return new Promise( (resolve, reject) => {
 
@@ -32,6 +40,11 @@ const removeAccents = function(str){
      
     return ''+str;
 }
+/**
+ * read and update all deputies, 
+ * removing accents in "Nom" and "Prenom", 
+ * removing all 2nd, 3rd or more other "Prenom" after the comma.
+ */
 const loadDeputes = async () => {
    
 

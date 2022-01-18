@@ -5,7 +5,7 @@ Provide also scripts to restructure datas from deputies bson files and to store 
 
 ## TECHNO
 
-<em>nodejs, express, mongodb, pdf-parse</em>
+<em>nodejs, express, mongodb, mongoose, pdf-parse</em>
 
 ## USAGE 
 
@@ -14,3 +14,8 @@ Provide also scripts to restructure datas from deputies bson files and to store 
 3. In the terminal, type "npm i" and press enter (you have to get [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) and [nodejs](https://nodejs.org/en/download/) installed).
 3. In the terminal, type "npm run test" and press enter for launching mocha test or "npm run build" to create a dist folder containing the javascript native code.
 4. Be shure to have [mongodb](https://www.mongodb.com/) installed on your local machine and accessible for dev mode.
+
+## SCRIPTS
+
+1. Use scripts "buildDeputies", "exportCleanDeputies" and "importCleanDeputies" to create a mongodb collection compatible with pfd files.
+You need to have the original deputes.bson in the files folder

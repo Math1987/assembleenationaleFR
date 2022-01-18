@@ -4,6 +4,10 @@
   "description": "Provide api for searching and filtering deputies matching with articles (they published) by words for http, and scripts for adding new articles and deputies.",
   "main": "index.js",
   "scripts": {
+    "buildDeputies": "mongoimport --db deputies --collection deputies --file ./files/deputes.bson && node scripts/deputies.script.js",
+    "exportCleanDeputies": "mongoexport --db deputies --collection deputies -o files/deputies_clean.bson",
+    "importCleanDeputies": "mongoimport --db assemblee_nationale --collection deputies --file ./files/deputies_clean.bson",
+
     "build": "tsc",
     "test": "MODE=test mocha --check-leaks -r tsconfig-paths/register -r ts-node/register \"test/**/*.spec.ts\""
   },
@@ -17,14 +21,16 @@
   "devDependencies": {
     "@types/chai": "^4.3.0",
     "@types/expect": "^24.3.0",
-    "@types/mocha": "^9.0.0",
-    "@types/mongoose": "^5.11.97",
-    "@types/mongodb": "^4.0.7",
     "@types/express": "^4.17.13",
+    "@types/mocha": "^9.0.0",
+    "@types/mongodb": "^4.0.7",
+    "@types/mongoose": "^5.11.97",
     "@types/node": "^17.0.8",
     "@types/supertest": "^2.0.11",
+    "bson": "^4.6.1",
     "chai": "^4.3.4",
     "mocha": "^9.1.3",
+    "mongodb": "^4.3.0",
     "supertest": "^6.2.1",
     "ts-node": "^10.4.0",
     "tsconfig-paths": "^3.12.0",

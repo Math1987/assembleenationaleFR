@@ -39,61 +39,44 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.reset = exports.init = exports.db = void 0;
+exports.readOneByDatas = exports.readOne = exports.create = exports.init = exports.schema = void 0;
 var mongoose_1 = __importDefault(require("mongoose"));
-var environment_1 = __importDefault(require("../environment"));
-var example_data_1 = require("./example.data");
-var articles_data_1 = require("./articles.data");
-var deputies_data_1 = require("./deputies.data");
-/**
- * Create a mongodb connection.
- * Load all the collections.
- *
- * @returns the mongoose connection
- */
-var init = function () { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, mongoose_1["default"].createConnection(environment_1["default"].db)];
-            case 1:
-                exports.db = _a.sent();
-                //load your collections 
-                //exemple db.model("user", userSchema)
-                (0, example_data_1.init)(exports.db);
-                (0, deputies_data_1.init)(exports.db);
-                (0, articles_data_1.init)(exports.db);
-                return [2 /*return*/, exports.db];
-        }
-    });
-}); };
+var db = null;
+exports.schema = new mongoose_1["default"].Schema({
+    Nom: { type: String },
+    Prenom: { type: String }
+}, { strict: false });
+exports.schema.index({ Nom: 1, Prenom: 1 });
+var model;
+var init = function (db_) {
+    db = db_;
+    model = db.model('deputies', exports.schema);
+};
 exports.init = init;
-/**
- * Drop the database with all collections, disconnect and reload.
- * Note: disconnecting and reloading is important to assure correct indexation.
- * (usfull for testing)
- *
- * @returns true
- */
-var reset = function () { return __awaiter(void 0, void 0, void 0, function () {
+var create = function (datas) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0:
-                if (!!exports.db) return [3 /*break*/, 2];
-                return [4 /*yield*/, (0, exports.init)()];
-            case 1:
-                _a.sent();
-                _a.label = 2;
-            case 2: return [4 /*yield*/, exports.db.dropDatabase()];
-            case 3:
-                _a.sent();
-                return [4 /*yield*/, mongoose_1["default"].disconnect()];
-            case 4:
-                _a.sent();
-                return [4 /*yield*/, (0, exports.init)()];
-            case 5:
-                _a.sent();
-                return [2 /*return*/, true];
+            case 0: return [4 /*yield*/, new model(datas).save()];
+            case 1: return [2 /*return*/, _a.sent()];
         }
     });
 }); };
-exports.reset = reset;
+exports.create = create;
+var readOne = function (_id) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, model.findOne({ _id: _id })];
+            case 1: return [2 /*return*/, _a.sent()];
+        }
+    });
+}); };
+exports.readOne = readOne;
+var readOneByDatas = function (datas) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, model.findOne(datas)];
+            case 1: return [2 /*return*/, _a.sent()];
+        }
+    });
+}); };
+exports.readOneByDatas = readOneByDatas;

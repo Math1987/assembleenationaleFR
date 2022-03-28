@@ -8,6 +8,8 @@
     "exportCleanDeputies": "mongoexport --db deputies --collection deputies -o files/deputies_clean.bson",
     "importCleanDeputies": "mongoimport --db assemblee_nationale --collection deputies --file ./files/deputies_clean.bson",
 
+    "importArticle" : "tsc && node dist/scripts/articles.script.js",
+
     "build": "tsc",
     "test": "MODE=test mocha --check-leaks -r tsconfig-paths/register -r ts-node/register \"test/**/*.spec.ts\""
   },

@@ -39,61 +39,68 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.reset = exports.init = exports.db = void 0;
-var mongoose_1 = __importDefault(require("mongoose"));
-var environment_1 = __importDefault(require("../environment"));
-var example_data_1 = require("./example.data");
-var articles_data_1 = require("./articles.data");
-var deputies_data_1 = require("./deputies.data");
-/**
- * Create a mongodb connection.
- * Load all the collections.
- *
- * @returns the mongoose connection
- */
-var init = function () { return __awaiter(void 0, void 0, void 0, function () {
+exports.transformPDFtoWordsArray = void 0;
+var pdf_parse_1 = __importDefault(require("pdf-parse"));
+var eraseUnlessSpaces = function (text) {
+    try {
+        var newText = '';
+        var space = 0;
+        for (var i = 0; i < text.length; i++) {
+            if (text.charAt(i) === " ") {
+                space++;
+            }
+            else {
+                space = 0;
+            }
+            if (space <= 1) {
+                newText += text.charAt(i);
+            }
+        }
+        return newText;
+    }
+    catch (e) {
+        console.log(e);
+        return '';
+    }
+};
+var transformPDFtoWordsArray = function (file) { return __awaiter(void 0, void 0, void 0, function () {
+    var datas, txt, articles, startArticle, i, prenom, i2, i3, ei, nom, article;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, mongoose_1["default"].createConnection(environment_1["default"].db)];
+            case 0: return [4 /*yield*/, (0, pdf_parse_1["default"])(file)];
             case 1:
-                exports.db = _a.sent();
-                //load your collections 
-                //exemple db.model("user", userSchema)
-                (0, example_data_1.init)(exports.db);
-                (0, deputies_data_1.init)(exports.db);
-                (0, articles_data_1.init)(exports.db);
-                return [2 /*return*/, exports.db];
+                datas = _a.sent();
+                txt = eraseUnlessSpaces(datas.text);
+                articles = [];
+                startArticle = 0;
+                for (i = 0; i < txt.length; i++) {
+                    if (i > 4 && (txt.slice(i - 4, i) === "(M. " || txt.slice(i - 4, i) === "(Mme" || txt.slice(i - 4, i) === "(Mll")) {
+                        prenom = '';
+                        i2 = i;
+                        while (txt.charAt(i2) !== ')') {
+                            prenom += txt.charAt(i2);
+                            i2++;
+                        }
+                        i3 = i - 5;
+                        while (txt.charAt(i3) === " ") {
+                            i3--;
+                        }
+                        ei = i3 + 1;
+                        while (txt.charAt(i3) !== " " && txt.charAt(i3) !== "\n") {
+                            i3--;
+                        }
+                        nom = txt.slice(i3, ei);
+                        article = {
+                            Nom: nom.replace(/(\r\n|\n|\r)/gm, ""),
+                            Prenom: prenom.replace(/(\r\n|\n|\r)/gm, ""),
+                            text: txt.slice(startArticle, i3).replace(/(\r\n|\n|\r)/gm, "")
+                        };
+                        articles.push(article);
+                        startArticle = i2 + 1;
+                    }
+                }
+                return [2 /*return*/, articles];
         }
     });
 }); };
-exports.init = init;
-/**
- * Drop the database with all collections, disconnect and reload.
- * Note: disconnecting and reloading is important to assure correct indexation.
- * (usfull for testing)
- *
- * @returns true
- */
-var reset = function () { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                if (!!exports.db) return [3 /*break*/, 2];
-                return [4 /*yield*/, (0, exports.init)()];
-            case 1:
-                _a.sent();
-                _a.label = 2;
-            case 2: return [4 /*yield*/, exports.db.dropDatabase()];
-            case 3:
-                _a.sent();
-                return [4 /*yield*/, mongoose_1["default"].disconnect()];
-            case 4:
-                _a.sent();
-                return [4 /*yield*/, (0, exports.init)()];
-            case 5:
-                _a.sent();
-                return [2 /*return*/, true];
-        }
-    });
-}); };
-exports.reset = reset;
+exports.transformPDFtoWordsArray = transformPDFtoWordsArray;

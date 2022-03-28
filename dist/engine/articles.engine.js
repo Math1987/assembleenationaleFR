@@ -39,61 +39,64 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.reset = exports.init = exports.db = void 0;
-var mongoose_1 = __importDefault(require("mongoose"));
-var environment_1 = __importDefault(require("../environment"));
-var example_data_1 = require("./example.data");
-var articles_data_1 = require("./articles.data");
-var deputies_data_1 = require("./deputies.data");
-/**
- * Create a mongodb connection.
- * Load all the collections.
- *
- * @returns the mongoose connection
- */
-var init = function () { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, mongoose_1["default"].createConnection(environment_1["default"].db)];
-            case 1:
-                exports.db = _a.sent();
-                //load your collections 
-                //exemple db.model("user", userSchema)
-                (0, example_data_1.init)(exports.db);
-                (0, deputies_data_1.init)(exports.db);
-                (0, articles_data_1.init)(exports.db);
-                return [2 /*return*/, exports.db];
-        }
-    });
-}); };
-exports.init = init;
-/**
- * Drop the database with all collections, disconnect and reload.
- * Note: disconnecting and reloading is important to assure correct indexation.
- * (usfull for testing)
- *
- * @returns true
- */
-var reset = function () { return __awaiter(void 0, void 0, void 0, function () {
+exports.findArticles = exports.decodeAndSavePdfInDB = void 0;
+var articles_data_1 = require("../datas/articles.data");
+var fs_1 = __importDefault(require("fs"));
+var pdf_engine_1 = require("./pdf.engine");
+var decodeAndSavePdfInDB = function (path) { return __awaiter(void 0, void 0, void 0, function () {
+    var file, articles, i;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                if (!!exports.db) return [3 /*break*/, 2];
-                return [4 /*yield*/, (0, exports.init)()];
+                file = fs_1["default"].readFileSync(path);
+                return [4 /*yield*/, (0, pdf_engine_1.transformPDFtoWordsArray)(file)];
             case 1:
-                _a.sent();
+                articles = _a.sent();
+                i = 1;
                 _a.label = 2;
-            case 2: return [4 /*yield*/, exports.db.dropDatabase()];
+            case 2:
+                if (!(i < articles.length)) return [3 /*break*/, 4];
+                return [4 /*yield*/, (0, articles_data_1.create)(articles[i])];
             case 3:
                 _a.sent();
-                return [4 /*yield*/, mongoose_1["default"].disconnect()];
-            case 4:
-                _a.sent();
-                return [4 /*yield*/, (0, exports.init)()];
-            case 5:
-                _a.sent();
-                return [2 /*return*/, true];
+                i++;
+                return [3 /*break*/, 2];
+            case 4: return [2 /*return*/];
         }
     });
 }); };
-exports.reset = reset;
+exports.decodeAndSavePdfInDB = decodeAndSavePdfInDB;
+var removeAccents = function (str) {
+    var accent = [
+        /[\300-\306]/g, /[\340-\346]/g,
+        /[\310-\313]/g, /[\350-\353]/g,
+        /[\314-\317]/g, /[\354-\357]/g,
+        /[\322-\330]/g, /[\362-\370]/g,
+        /[\331-\334]/g, /[\371-\374]/g,
+        /[\321]/g, /[\361]/g,
+        /[\307]/g, /[\347]/g, // C, c
+    ];
+    var noaccent = ['A', 'a', 'E', 'e', 'I', 'i', 'O', 'o', 'U', 'u', 'N', 'n', 'C', 'c'];
+    for (var i = 0; i < accent.length; i++) {
+        str = str.replace(accent[i], noaccent[i]);
+    }
+    return '' + str;
+};
+var findArticles = function (words) { return __awaiter(void 0, void 0, void 0, function () {
+    var articles, value, url;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, (0, articles_data_1.findOnText)(words)];
+            case 1:
+                articles = _a.sent();
+                value = '';
+                url = "http://localhost:6060";
+                //@ts-ignore
+                articles.forEach(function (a) {
+                    value += "<div>\n        <a href=\"".concat(url, "/deputie?Nom=").concat(removeAccents(a.Nom.toUpperCase()), "&Prenom=").concat(removeAccents(a.Prenom.toLowerCase()), "\">Nom: ").concat(a.Nom, " Pr\u00E9nom: ").concat(a.Prenom, "</a>\n         => \n         <a href=\"").concat(url, "/article?id=").concat(a._id, "\">ARTICLE</a>\n         </div>");
+                });
+                return [2 /*return*/, value];
+        }
+    });
+}); };
+exports.findArticles = findArticles;

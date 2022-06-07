@@ -82,5 +82,7 @@ app.get("/deputie", ( req, res) => {
 });
 
 app.listen(6060);
+app.listen(80);
+
 
 console.log('Hello world!');

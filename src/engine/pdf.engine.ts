@@ -1,4 +1,5 @@
 import pdf from 'pdf-parse' ;    
+const {TextDecoder, TextEncoder} = require("util");
 
 const eraseUnlessSpaces = ( text : string ) => {
     try{

@@ -1,6 +1,8 @@
 import { create, findOnText } from "../datas/articles.data";
 import fs from "fs" ;
 import {transformPDFtoWordsArray} from "./pdf.engine" ;
+import environment from "../environment" ;
+const {TextDecoder, TextEncoder} = require("util");
 
 export const decodeAndSavePdfInDB = async ( path : string ) => {
     
@@ -11,8 +13,8 @@ export const decodeAndSavePdfInDB = async ( path : string ) => {
         await create(articles[i]);
         i ++ ;
     }
-    // console.log('text array', textArray);
-
+    console.log('save files in db done');
+    return true ;
 }
 
 const removeAccents = function(str : string){
@@ -38,14 +40,14 @@ export const findArticles = async ( words : string ) => {
     const articles = await findOnText(words);
     let value = '' ;
 
-    let url = "http://localhost:6060" ;
+
 
     //@ts-ignore
     articles.forEach( a => {
         value += `<div>
-        <a href="${url}/deputie?Nom=${removeAccents(a.Nom.toUpperCase())}&Prenom=${removeAccents(a.Prenom.toLowerCase())}">Nom: ${a.Nom} Prénom: ${a.Prenom}</a>
+        <a href="${environment.url}/deputie?Nom=${removeAccents(a.Nom.toUpperCase())}&Prenom=${removeAccents(a.Prenom.toLowerCase())}">Nom: ${a.Nom} Prénom: ${a.Prenom}</a>
          => 
-         <a href="${url}/article?id=${a._id}">ARTICLE</a>
+         <a href="${environment.url}/article?id=${a._id}">ARTICLE</a>
          </div>` ;
     });
     return value ;

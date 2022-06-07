@@ -43,6 +43,8 @@ exports.findArticles = exports.decodeAndSavePdfInDB = void 0;
 var articles_data_1 = require("../datas/articles.data");
 var fs_1 = __importDefault(require("fs"));
 var pdf_engine_1 = require("./pdf.engine");
+var environment_1 = __importDefault(require("../environment"));
+var _a = require("util"), TextDecoder = _a.TextDecoder, TextEncoder = _a.TextEncoder;
 var decodeAndSavePdfInDB = function (path) { return __awaiter(void 0, void 0, void 0, function () {
     var file, articles, i;
     return __generator(this, function (_a) {
@@ -61,7 +63,9 @@ var decodeAndSavePdfInDB = function (path) { return __awaiter(void 0, void 0, vo
                 _a.sent();
                 i++;
                 return [3 /*break*/, 2];
-            case 4: return [2 /*return*/];
+            case 4:
+                console.log('save files in db done');
+                return [2 /*return*/, true];
         }
     });
 }); };
@@ -83,17 +87,16 @@ var removeAccents = function (str) {
     return '' + str;
 };
 var findArticles = function (words) { return __awaiter(void 0, void 0, void 0, function () {
-    var articles, value, url;
+    var articles, value;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4 /*yield*/, (0, articles_data_1.findOnText)(words)];
             case 1:
                 articles = _a.sent();
                 value = '';
-                url = "http://localhost:6060";
                 //@ts-ignore
                 articles.forEach(function (a) {
-                    value += "<div>\n        <a href=\"".concat(url, "/deputie?Nom=").concat(removeAccents(a.Nom.toUpperCase()), "&Prenom=").concat(removeAccents(a.Prenom.toLowerCase()), "\">Nom: ").concat(a.Nom, " Pr\u00E9nom: ").concat(a.Prenom, "</a>\n         => \n         <a href=\"").concat(url, "/article?id=").concat(a._id, "\">ARTICLE</a>\n         </div>");
+                    value += "<div>\n        <a href=\"".concat(environment_1["default"].url, "/deputie?Nom=").concat(removeAccents(a.Nom.toUpperCase()), "&Prenom=").concat(removeAccents(a.Prenom.toLowerCase()), "\">Nom: ").concat(a.Nom, " Pr\u00E9nom: ").concat(a.Prenom, "</a>\n         => \n         <a href=\"").concat(environment_1["default"].url, "/article?id=").concat(a._id, "\">ARTICLE</a>\n         </div>");
                 });
                 return [2 /*return*/, value];
         }

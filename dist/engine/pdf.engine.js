@@ -41,6 +41,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 exports.transformPDFtoWordsArray = void 0;
 var pdf_parse_1 = __importDefault(require("pdf-parse"));
+var _a = require("util"), TextDecoder = _a.TextDecoder, TextEncoder = _a.TextEncoder;
 var eraseUnlessSpaces = function (text) {
     try {
         var newText = '';

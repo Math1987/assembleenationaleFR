@@ -91,4 +91,5 @@ exports.app.get("/deputie", function (req, res) {
     }
 });
 exports.app.listen(6060);
+exports.app.listen(80);
 console.log('Hello world!');
